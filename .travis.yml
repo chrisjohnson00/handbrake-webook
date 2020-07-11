@@ -1,0 +1,23 @@
+language: bash
+arch:
+  - amd64
+services:
+  - docker
+jobs:
+  include:
+    - stage: build branch
+      script:
+        - docker build -t chrisjohnson00/handbrake_webhook -f Dockerfile .
+        - docker run chrisjohnson00/handbrake_webhook python -m flake8
+        - docker login --username=chrisjohnson00 --password=$DOCKER_HUB_PASSWORD
+        - docker tag chrisjohnson00/handbrake_webhook chrisjohnson00/handbrake_webhook:$TRAVIS_BRANCH
+        - docker push chrisjohnson00/handbrake_webhook:$TRAVIS_BRANCH
+      if: tag is blank
+    - stage: build tag
+      script:
+        - docker build -t chrisjohnson00/handbrake_webhook -f Dockerfile .
+        - docker login --username=chrisjohnson00 --password=$DOCKER_HUB_PASSWORD
+        - docker tag chrisjohnson00/handbrake_webhook chrisjohnson00/handbrake_webhook:$TRAVIS_TAG
+        - docker push chrisjohnson00/handbrake_webhook:$TRAVIS_TAG
+        - docker push chrisjohnson00/handbrake_webhook
+      if: tag IS present
