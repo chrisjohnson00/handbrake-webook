@@ -60,12 +60,6 @@ def config():
     return response_text
 
 
-# def copy_file(src, dest):
-#     command = ["cp", src, "{}/.".format(dest)]
-#     application.logger.info("File copy command called {}".format(command))
-#     # subprocess.run(command, check=True)
-
-
 def get_config(key, config_path=CONFIG_PATH):
     if os.environ.get(key):
         return os.environ.get(key)
