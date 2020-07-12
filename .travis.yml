@@ -9,6 +9,7 @@ jobs:
       script:
         - docker build -t chrisjohnson00/handbrake_webhook -f Dockerfile .
         - docker run chrisjohnson00/handbrake_webhook python -m flake8
+        - docker run chrisjohnson00/handbrake_webhook python -m pytest
         - docker login --username=chrisjohnson00 --password=$DOCKER_HUB_PASSWORD
         - docker tag chrisjohnson00/handbrake_webhook chrisjohnson00/handbrake_webhook:$TRAVIS_BRANCH
         - docker push chrisjohnson00/handbrake_webhook:$TRAVIS_BRANCH

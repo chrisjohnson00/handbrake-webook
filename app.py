@@ -1,5 +1,6 @@
 from flask import Flask, request
 import logging
+from api_client.client import get_full_file_path
 
 application = Flask(__name__)
 application.logger.setLevel(logging.INFO)
@@ -16,6 +17,7 @@ def web_hook():
     application.logger.info("Web hook called")
     application.logger.info("Web hook headers: {}".format(request.headers))
     application.logger.info("Web hook data: {}".format(request.get_json()))
+    application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
     return 'Done'
 
 
@@ -36,6 +38,12 @@ def config():
         else:
             response_text += "{}: {}<br/>".format(config, value)
     return response_text
+
+
+def move_file(src, dest):
+    command = ["mv", src, dest]
+    application.logger.info("File move command called {}".format(command))
+    # subprocess.run(command, check=True)
 
 
 if __name__ == "__main__":
