@@ -7,6 +7,7 @@ jobs:
   include:
     - stage: build branch
       script:
+        - set -e
         - docker build -t chrisjohnson00/handbrake_webhook -f Dockerfile .
         - docker run chrisjohnson00/handbrake_webhook python -m flake8
         - docker run chrisjohnson00/handbrake_webhook python -m pytest
