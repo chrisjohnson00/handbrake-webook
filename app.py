@@ -21,7 +21,7 @@ def web_hook():
     application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
     application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
     application.logger.info("Destination path is {}".format(get_move_path(get_quality_level(request.get_json()))))
-    move_file(get_full_file_path(request.get_json()), get_move_path(get_quality_level(request.get_json())))
+    copy_file(get_full_file_path(request.get_json()), get_move_path(get_quality_level(request.get_json())))
     return 'Done'
 
 
@@ -44,8 +44,8 @@ def config():
     return response_text
 
 
-def move_file(src, dest):
-    command = ["mv", src, dest]
+def copy_file(src, dest):
+    command = ["cp", src, dest]
     application.logger.info("File move command called {}".format(command))
     # subprocess.run(command, check=True)
 
