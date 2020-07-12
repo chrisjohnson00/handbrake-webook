@@ -9,4 +9,6 @@ A webhook receiver for Sonarr/Radarr that copies files for the handbrake pipelin
 
 ## Run Locally
 
+    export watch1080p=/1080p
+    export watch720p=/720p
     flask run

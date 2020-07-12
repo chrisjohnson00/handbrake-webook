@@ -1,5 +1,6 @@
 from flask import Flask, request
 import logging
+import os
 from api_client.client import get_full_file_path, get_quality_level
 
 application = Flask(__name__)
@@ -19,6 +20,8 @@ def web_hook():
     application.logger.info("Web hook data: {}".format(request.get_json()))
     application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
     application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
+    application.logger.info("Destination path is {}".format(get_move_path(get_quality_level(request.get_json()))))
+    move_file(get_full_file_path(request.get_json()), get_move_path(get_quality_level(request.get_json())))
     return 'Done'
 
 
@@ -45,6 +48,17 @@ def move_file(src, dest):
     command = ["mv", src, dest]
     application.logger.info("File move command called {}".format(command))
     # subprocess.run(command, check=True)
+
+
+def get_move_path(quality):
+    return get_config("watch{}".format(quality))
+
+
+def get_config(key):
+    if os.environ.get(key):
+        return os.environ.get(key)
+    else:
+        raise ValueError("{} is not a valid quality level or isn't configured with a destination path yet".format(key))
 
 
 if __name__ == "__main__":
