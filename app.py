@@ -1,6 +1,6 @@
 from flask import Flask, request
 import logging
-from api_client.client import get_full_file_path
+from api_client.client import get_full_file_path, get_quality_level
 
 application = Flask(__name__)
 application.logger.setLevel(logging.INFO)
@@ -18,6 +18,7 @@ def web_hook():
     application.logger.info("Web hook headers: {}".format(request.headers))
     application.logger.info("Web hook data: {}".format(request.get_json()))
     application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
+    application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
     return 'Done'
 
 
