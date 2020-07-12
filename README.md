@@ -9,6 +9,11 @@ A webhook receiver for Sonarr/Radarr that copies files for the handbrake pipelin
 
 ## Run Locally
 
+    echo "Starting Kafka locally"
+    docker-compose up -d
     export watch1080p=/1080p
     export watch720p=/720p
+    export KAFKA_SERVER=localhost:9092
+    export KAFKA_TOPIC=bla
+    export FLASK_ENV=development
     flask run

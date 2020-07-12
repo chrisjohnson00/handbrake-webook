@@ -20,3 +20,7 @@ def get_quality_level(api_json):
         return "1080p"
     else:
         return "720p"
+
+
+def get_event_type(api_json):
+    return api_json['eventType']
