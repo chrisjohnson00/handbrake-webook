@@ -45,7 +45,7 @@ def config():
 
 
 def copy_file(src, dest):
-    command = ["cp", src, dest]
+    command = ["cp", src, "{}/.".format(dest)]
     application.logger.info("File move command called {}".format(command))
     # subprocess.run(command, check=True)
 
