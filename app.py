@@ -34,7 +34,7 @@ def web_hook():
     application.logger.info("Sending message {} to topic '{}'".format(kafka_message, get_config("KAFKA_TOPIC")))
     future = producer.send(topic=get_config("KAFKA_TOPIC"),
                            value=kafka_message)
-    result = future.get(timeout=60)
+    future.get(timeout=60)
 
     return 'Done'
 
