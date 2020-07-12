@@ -4,7 +4,7 @@ import os
 import consul
 from json import dumps
 from kafka import KafkaProducer, KafkaClient
-from api_client.client import get_full_file_path, get_quality_level
+from api_client.client import get_full_file_path, get_quality_level, get_event_type
 
 application = Flask(__name__)
 application.logger.setLevel(logging.INFO)
@@ -26,6 +26,9 @@ def web_hook():
     application.logger.info("Web hook called")
     application.logger.info("Web hook headers: {}".format(request.headers))
     application.logger.info("Web hook data: {}".format(request.get_json()))
+    event_type = get_event_type(request.get_json())
+    if event_type == "Test":
+        return "Test"
     application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
     application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
     kafka_message = {'source_full_path': get_full_file_path(request.get_json()), 'move_type': 'to_encode',
