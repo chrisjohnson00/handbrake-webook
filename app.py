@@ -24,9 +24,10 @@ def web_hook():
                              value_serializer=lambda x:
                              dumps(x).encode('utf-8'))
     application.logger.info("Web hook called")
-    application.logger.info("Web hook headers: {}".format(request.headers))
-    application.logger.info("Web hook data: {}".format(request.get_json()))
+    application.logger.debug("Web hook headers: {}".format(request.headers))
+    application.logger.debug("Web hook data: {}".format(request.get_json()))
     event_type = get_event_type(request.get_json())
+    # Test is the event type when sonarr sends for a "test" or "save" in settings
     if event_type == "Test":
         return "Test"
     application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
