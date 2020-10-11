@@ -7,7 +7,7 @@ from kafka import KafkaProducer, KafkaClient
 from api_client.client import get_full_file_path, get_quality_level, get_event_type
 
 application = Flask(__name__)
-application.logger.setLevel(logging.INFO)
+application.logger.setLevel(logging.DEBUG)
 required_configs = ['KAFKA_TOPIC', 'KAFKA_SERVER']
 CONFIG_PATH = "handbrake-webhook"
 
