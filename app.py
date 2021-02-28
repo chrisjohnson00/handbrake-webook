@@ -4,7 +4,7 @@ import os
 import consul
 from json import dumps
 from kafka import KafkaProducer, KafkaClient
-from api_client.client import get_full_file_path, get_quality_level, get_event_type
+from api_client.client import SonarrClient, RadarrClient
 
 application = Flask(__name__)
 application.logger.setLevel(logging.DEBUG)
@@ -28,22 +28,35 @@ def web_hook():
     application.logger.debug("Web hook data: {}".format(request.get_json()))
     user_agent = request.headers['User-Agent']
     application.logger.info("User-Agent: {}".format(user_agent))
-    event_type = get_event_type(request.get_json())
+    client = SonarrClient(request.get_json())  # could be any client
+    event_type = client.get_event_type()
     # Test is the event type when sonarr sends for a "test" or "save" in settings
     if event_type == "Test":
         return "Test"
     if 'Sonarr' in user_agent:
-        application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
-        application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
-        kafka_message = {'source_full_path': get_full_file_path(request.get_json()), 'move_type': 'to_encode',
-                         'type': 'tv', 'quality': get_quality_level(request.get_json())}
-        application.logger.info("Sending message {} to topic '{}'".format(kafka_message, get_config("KAFKA_TOPIC")))
-        future = producer.send(topic=get_config("KAFKA_TOPIC"),
-                               value=kafka_message)
-        future.get(timeout=60)
+        client = SonarrClient(request.get_json())
+        path = client.get_full_file_path()
+        quality = client.get_quality_level()
+        send_message(path, producer, quality, 'tv')
+    elif 'Radarr' in user_agent:
+        client = RadarrClient(request.get_json())
+        path = client.get_full_file_path()
+        quality = client.get_quality_level()
+        send_message(path, producer, quality, 'movie')
     else:
-        application.logger.info("Skipping as it's not a request from Sonarr")
+        raise Exception("Boom!  Unexpected user agent: {}".format(user_agent))
     return 'Done'
+
+
+def send_message(path, producer, quality, type):
+    application.logger.info("Calculated file path is {}".format(path))
+    application.logger.info("Calculated quality level is {}".format(quality))
+    kafka_message = {'source_full_path': path, 'move_type': 'to_encode',
+                     'type': type, 'quality': quality}
+    application.logger.info("Sending message {} to topic '{}'".format(kafka_message, get_config("KAFKA_TOPIC")))
+    future = producer.send(topic=get_config("KAFKA_TOPIC"),
+                           value=kafka_message)
+    future.get(timeout=60)
 
 
 @application.route('/health')

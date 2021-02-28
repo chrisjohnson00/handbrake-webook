@@ -1,4 +1,4 @@
-from api_client.client import get_full_file_path, get_quality_level
+from api_client.client import SonarrClient, RadarrClient
 import pytest
 import json
 
@@ -19,8 +19,8 @@ import json
         "tvdbId":268592,"tvMazeId":6,"imdbId":"tt2661044","type":
         "standard"}}""",
         "/tv/The 100/Season 4/The 100 - S04E01 - Echoes WEBRip-1080p.mkv")])
-def test_get_full_file_path(test_input, expected):
-    assert expected == get_full_file_path(json.loads(test_input))
+def test_sonarr_get_full_file_path(test_input, expected):
+    assert expected == SonarrClient(json.loads(test_input)).get_full_file_path()
 
 
 @pytest.mark.parametrize("test_input,expected", [(
@@ -72,5 +72,77 @@ def test_get_full_file_path(test_input, expected):
             "standard"}}""",
             "720p")
 ])
-def test_get_quality_level(test_input, expected):
-    assert expected == get_quality_level(json.loads(test_input))
+def test_sonarr_get_quality_level(test_input, expected):
+    assert expected == SonarrClient(json.loads(test_input)).get_quality_level()
+
+
+@pytest.mark.parametrize("test_input, expected", [(
+        """{
+  "movie":{
+    "id":1118,
+    "title":"Caddyshack",
+    "releaseDate":"1980-10-23",
+    "folderPath":"/movies/Caddyshack (1980) {imdb-tt0080487}",
+    "tmdbId":11977,
+    "imdbId":"tt0080487"
+  },
+  "remoteMovie":{
+    "tmdbId":11977,
+    "imdbId":"tt0080487",
+    "title":"Caddyshack",
+    "year":1980
+  },
+  "movieFile":{
+    "id":1123,
+    "relativePath":"Caddyshack (1980) {imdb-tt0080487}.mp4",
+    "path":"/downloads/Caddyshack (1980) [1080p]/Caddyshack.1980.1080p.BRrip.x264.YIFY.mp4",
+    "quality":"Bluray-1080p",
+    "qualityVersion":1,
+    "releaseGroup":"1080p",
+    "size":1610487095
+  },
+  "isUpgrade":false,
+  "downloadId":"956406E27B6DE70155557C9CCE136F9E27C2C298",
+  "eventType":"Download"
+}""",
+        "/movies/Caddyshack (1980) {imdb-tt0080487}/Caddyshack (1980) {imdb-tt0080487}.mp4"),
+
+])
+def test_radarr_get_full_file_path(test_input, expected):
+    assert RadarrClient(json.loads(test_input)).get_full_file_path() == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [(
+        """{
+  "movie":{
+    "id":1118,
+    "title":"Caddyshack",
+    "releaseDate":"1980-10-23",
+    "folderPath":"/movies/Caddyshack (1980) {imdb-tt0080487}",
+    "tmdbId":11977,
+    "imdbId":"tt0080487"
+  },
+  "remoteMovie":{
+    "tmdbId":11977,
+    "imdbId":"tt0080487",
+    "title":"Caddyshack",
+    "year":1980
+  },
+  "movieFile":{
+    "id":1123,
+    "relativePath":"Caddyshack (1980) {imdb-tt0080487}.mp4",
+    "path":"/downloads/Caddyshack (1980) [1080p]/Caddyshack.1980.1080p.BRrip.x264.YIFY.mp4",
+    "quality":"Bluray-1080p",
+    "qualityVersion":1,
+    "releaseGroup":"1080p",
+    "size":1610487095
+  },
+  "isUpgrade":false,
+  "downloadId":"956406E27B6DE70155557C9CCE136F9E27C2C298",
+  "eventType":"Download"
+}""",
+        "1080p"),
+
+])
+def test_radarr_get_quality_level(test_input, expected):
+    assert RadarrClient(json.loads(test_input)).get_quality_level() == expected
