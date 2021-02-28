@@ -36,8 +36,7 @@ def web_hook():
         application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
         application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
         kafka_message = {'source_full_path': get_full_file_path(request.get_json()), 'move_type': 'to_encode',
-                         'type': 'tv', 'quality': get_quality_level(
-                request.get_json())}
+                         'type': 'tv', 'quality': get_quality_level(request.get_json())}
         application.logger.info("Sending message {} to topic '{}'".format(kafka_message, get_config("KAFKA_TOPIC")))
         future = producer.send(topic=get_config("KAFKA_TOPIC"),
                                value=kafka_message)
