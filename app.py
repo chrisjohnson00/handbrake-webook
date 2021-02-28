@@ -26,12 +26,12 @@ def web_hook():
     application.logger.info("Web hook called")
     application.logger.debug("Web hook headers: {}".format(request.headers))
     application.logger.debug("Web hook data: {}".format(request.get_json()))
+    user_agent = request.headers['User-Agent']
+    application.logger.info("User-Agent: {}".format(user_agent))
     event_type = get_event_type(request.get_json())
     # Test is the event type when sonarr sends for a "test" or "save" in settings
     if event_type == "Test":
         return "Test"
-    user_agent = request.headers['User-Agent']
-    application.logger.info("User-Agent: {}".format(user_agent))
     application.logger.info("Calculated file path is {}".format(get_full_file_path(request.get_json())))
     application.logger.info("Calculated quality level is {}".format(get_quality_level(request.get_json())))
     kafka_message = {'source_full_path': get_full_file_path(request.get_json()), 'move_type': 'to_encode',
