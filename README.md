@@ -17,3 +17,9 @@ A webhook receiver for Sonarr/Radarr that copies files for the handbrake pipelin
     export KAFKA_TOPIC=bla
     export FLASK_ENV=development
     flask run
+
+## Updating PyPi deps
+
+    pip install --upgrade pip Flask gunicorn kafka-python python-consul
+    pip freeze > requirements.txt
+    sed -i '/pkg-resources/d' requirements.txt
